@@ -1,71 +1,104 @@
 import os
 import numpy as np
 
+
 from tqdm import tqdm
 from torch.utils.data import Dataset
 
+from data_utils import CaiYang
+
 
 class S3DISDataset(Dataset):
-    def __init__(self, split='train', data_root='trainval_fullarea', num_point=4096, test_area=5, block_size=1.0, sample_rate=1.0, transform=None):
+    def __init__(self, split='train', data_root='trainval_fullarea', num_point=4096, test_area=5, block_size=1.0, sample_rate=00.1, transform=None):
         super().__init__()
-        self.num_point = num_point
-        self.block_size = block_size
+        self.num_point = num_point #4096 多少个点一组？
+        self.block_size = block_size #1.0 采样密度？1为全采样？
         self.transform = transform
+        # 将'data/stanford_indoor3d/'路径下的文件排序
         rooms = sorted(os.listdir(data_root))
         rooms = [room for room in rooms if 'Area_' in room]
+        rooms = [room for room in rooms if 'Area_5' not in room]
+        rooms = [room for room in rooms if 'Area_4' not in room]
+        rooms = [room for room in rooms if 'Area_3' not in room]
+        # 构建测试集或训练集的数据的文件名（转换好的npy），放在room里，默认区域5为测试集
         if split == 'train':
             rooms_split = [room for room in rooms if not 'Area_{}'.format(test_area) in room]
         else:
             rooms_split = [room for room in rooms if 'Area_{}'.format(test_area) in room]
 
-        self.room_points, self.room_labels = [], []
-        self.room_coord_min, self.room_coord_max = [], []
-        num_point_all = []
-        labelweights = np.zeros(13)
-
+        self.room_points, self.room_labels = [], [] #每个房间的点云和标签
+        self.room_coord_min, self.room_coord_max = [], [] #每个房间的最大值和最小值？
+        num_point_all = [] #初始化每个房间点的总数的列表
+        labelweights = np.zeros(13) #初始标签权重
+# tqdm 可视化进度条,每个NPY为一个房间，将每个房间（97个）的point（xyzrgb），label，max，min，都存在self里
         for room_name in tqdm(rooms_split, total=len(rooms_split)):
             room_path = os.path.join(data_root, room_name)
-            room_data = np.load(room_path)  # xyzrgbl, N*7
+            room_data = np.load(room_path)  # 一个小房间内的xyzrgbl, N*7
+            # 将np.array的数组，取索引从0到6的[:, 0: 6]。[:, 6]：取索引为7的,所以l为label？
             points, labels = room_data[:, 0:6], room_data[:, 6]  # xyzrgb, N*6; l, N
+            # histogram为统计直方图，这里是统计单个房间的所有点占14分类的比例（所有点放入14个桶中），为后面加权计算做准备
             tmp, _ = np.histogram(labels, range(14))
             labelweights += tmp
+            # 寻找该房间中所有xyz的最小值和最大值,把标签，点云数据，最大最小值，点的数量，都赋给了self？
             coord_min, coord_max = np.amin(points, axis=0)[:3], np.amax(points, axis=0)[:3]
             self.room_points.append(points), self.room_labels.append(labels)
             self.room_coord_min.append(coord_min), self.room_coord_max.append(coord_max)
             num_point_all.append(labels.size)
+        # for循环结束，每个房间一个文件，目前统计了每个房间的点云（xyzrgb），标签，最大，最小值？都放在self里
+        # labelweights为一个14个元素的数组，每个元素代表属于该分类的点的数量（所有文件）
         labelweights = labelweights.astype(np.float32)
-        labelweights = labelweights / np.sum(labelweights)
+        labelweights = labelweights / np.sum(labelweights)# 权重归一化
+        #amax为求最大值，power为求次方例如np.power([[0,1],[2,3]],[[4,5],[6,7]])=[[0,1][64,3^5]]
+        #所以这一步是最大权重除以每个权重的值，开三次方??不知道在干啥
         self.labelweights = np.power(np.amax(labelweights) / labelweights, 1 / 3.0)
         print(self.labelweights)
+        # sample_prob 为每个房间的点的个数占所有的房间点数之和的比例。
         sample_prob = num_point_all / np.sum(num_point_all)
+        # 所有房间所有点加起来*超参1（采样概率），再除以4096，这是在划分blocak？一个20760个
         num_iter = int(np.sum(num_point_all) * sample_rate / num_point)
         room_idxs = []
+       # 这是在根据每个房间点占总点的比率，求每个房间占的block的个数？
         for index in range(len(rooms_split)):
             room_idxs.extend([index] * int(round(sample_prob[index] * num_iter)))
+            #创造了一个room_idxs，例如第一个房间分到3个block，第二个房间分到5个block，第三个房间2个block
+            # 该list为：[0,0,0,1,1,1,1,1,2,2]
         self.room_idxs = np.array(room_idxs)
         print("Totally {} samples in {} set.".format(len(self.room_idxs), split))
-
+    # room_idxs为大小为block数量，内容为000112233这样的npy，room_points为npy数量*房间点数*6，room——lables为n*1
     def __getitem__(self, idx):
         room_idx = self.room_idxs[idx]
         points = self.room_points[room_idx]   # N * 6
         labels = self.room_labels[room_idx]   # N
-        N_points = points.shape[0]
-
+        N_points = points.shape[0]  # N
+        # points为选中房间的点云数*6，labels为选中房间的点云数*1
         while (True):
-            center = points[np.random.choice(N_points)][:3]
+            center = points[np.random.choice(N_points)][:3] #在该房间中一个随机的XYZ
             block_min = center - [self.block_size / 2.0, self.block_size / 2.0, 0]
             block_max = center + [self.block_size / 2.0, self.block_size / 2.0, 0]
+            # np.where（true or false,x,y）true返回x否则返回y
+            # 这里是只有一个参数的用法np.where(np.array([2,4,6,8])>5) 输出array[6,8]
+            # 这里是筛选所有X,Y在上述给定范围内的点 的id？
             point_idxs = np.where((points[:, 0] >= block_min[0]) & (points[:, 0] <= block_max[0]) & (points[:, 1] >= block_min[1]) & (points[:, 1] <= block_max[1]))[0]
+            # 如果剩下的符合条件的点大于1024，则跳出，否则重新设置条件，重新筛选
             if point_idxs.size > 1024:
                 break
-
+        # 跳出循环了，筛出了point_idxs个点，使用np.random.choice进行随机采样replace=True为允许重复采样
+        # TODO 改进采样算法
         if point_idxs.size >= self.num_point:
-            selected_point_idxs = np.random.choice(point_idxs, self.num_point, replace=False)
-        else:
-            selected_point_idxs = np.random.choice(point_idxs, self.num_point, replace=True)
+            # 原取样方法
+            # selected_point_idxs = np.random.choice(point_idxs, self.num_point, replace=False)
+            # selected_points = points[selected_point_idxs, :]
 
-        # normalize
-        selected_points = points[selected_point_idxs, :]  # num_point * 6
+            # 改进后
+            ids = np.random.choice(point_idxs, int(point_idxs.size/self.num_point)*self.num_point, replace=False)
+            selected_points,selected_point_idxs = CaiYang.JunyunCaiyang(points[ids, :][:, 0:3],points[ids, :][:, 3:7],self.num_point,ids)
+        else:
+            # 通常不会走这条，后续看情况再改
+            selected_point_idxs = np.random.choice(point_idxs, self.num_point, replace=True)
+            selected_points = points[selected_point_idxs, :]
+        # normalize selected_points为选中的4096个xyzrgb
+          # num_point * 6
+        # 返回一个特定形状的用0填充的数组，用于处理数据
         current_points = np.zeros((self.num_point, 9))  # num_point * 9
         current_points[:, 6] = selected_points[:, 0] / self.room_coord_max[room_idx][0]
         current_points[:, 7] = selected_points[:, 1] / self.room_coord_max[room_idx][1]
@@ -74,6 +107,9 @@ class S3DISDataset(Dataset):
         selected_points[:, 1] = selected_points[:, 1] - center[1]
         selected_points[:, 3:6] /= 255.0
         current_points[:, 0:6] = selected_points
+        # 经过一系列的不知名操作，得到了N*9的current_points，
+        # 其中前两个为XY减去一个中心值,第三个Z不变，456为RGB/256,
+        # 789为对应的XYZ除以对应的XYZ最大值
         current_labels = labels[selected_point_idxs]
         if self.transform is not None:
             current_points, current_labels = self.transform(current_points, current_labels)

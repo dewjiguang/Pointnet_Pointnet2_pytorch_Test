@@ -1029,3 +1029,42 @@ class clutter        weight: 0.011, IoU: 0.409
 2021-03-23 12:47:10,783 - Model - INFO - Best mIoU: 0.526403
 2021-03-23 12:47:10,783 - Model - INFO - **** Epoch 33 (36/128) ****
 2021-03-23 12:47:10,783 - Model - INFO - Learning rate:0.000343
+2022-11-16 20:04:30,488 - Model - INFO - PARAMETER ...
+2022-11-16 20:04:30,489 - Model - INFO - Namespace(batch_size=32, decay_rate=0.0001, epoch=20, gpu='0', learning_rate=0.001, log_dir='pointnet2_sem_seg', lr_decay=0.7, model='pointnet2_sem_seg', npoint=4096, optimizer='Adam', step_size=10, test_area=3)
+2022-11-16 20:06:04,153 - Model - INFO - The number of training data is: 2228
+2022-11-16 20:06:04,153 - Model - INFO - The number of test data is: 456
+2022-11-16 20:09:39,955 - Model - INFO - PARAMETER ...
+2022-11-16 20:09:39,955 - Model - INFO - Namespace(batch_size=32, decay_rate=0.0001, epoch=20, gpu='0', learning_rate=0.001, log_dir='pointnet2_sem_seg', lr_decay=0.7, model='pointnet2_sem_seg', npoint=4096, optimizer='Adam', step_size=10, test_area=3)
+2022-11-16 20:10:56,735 - Model - INFO - The number of training data is: 2228
+2022-11-16 20:10:56,735 - Model - INFO - The number of test data is: 456
+2022-11-16 20:11:10,518 - Model - INFO - Use pretrain model
+2022-11-16 20:11:10,519 - Model - INFO - **** Epoch 1 (15/20) ****
+2022-11-16 20:11:10,520 - Model - INFO - Learning rate:0.000700
+2022-11-16 20:11:45,493 - Model - INFO - PARAMETER ...
+2022-11-16 20:11:45,494 - Model - INFO - Namespace(batch_size=8, decay_rate=0.0001, epoch=20, gpu='0', learning_rate=0.001, log_dir='pointnet2_sem_seg', lr_decay=0.7, model='pointnet2_sem_seg', npoint=4096, optimizer='Adam', step_size=10, test_area=3)
+2022-11-16 20:13:11,621 - Model - INFO - The number of training data is: 2228
+2022-11-16 20:13:11,621 - Model - INFO - The number of test data is: 456
+2022-11-16 20:13:29,098 - Model - INFO - Use pretrain model
+2022-11-16 20:13:29,099 - Model - INFO - **** Epoch 1 (15/20) ****
+2022-11-16 20:13:29,099 - Model - INFO - Learning rate:0.000700
+2022-11-16 20:31:11,424 - Model - INFO - PARAMETER ...
+2022-11-16 20:31:11,433 - Model - INFO - Namespace(batch_size=8, decay_rate=0.0001, epoch=20, gpu='0', learning_rate=0.001, log_dir='pointnet2_sem_seg', lr_decay=0.7, model='pointnet2_sem_seg', npoint=4096, optimizer='Adam', step_size=10, test_area=3)
+2022-11-16 20:53:14,748 - Model - INFO - PARAMETER ...
+2022-11-16 20:53:14,748 - Model - INFO - Namespace(batch_size=8, decay_rate=0.0001, epoch=20, gpu='0', learning_rate=0.001, log_dir='pointnet2_sem_seg', lr_decay=0.7, model='pointnet2_sem_seg', npoint=4096, optimizer='Adam', step_size=10, test_area=3)
+2022-11-16 20:54:31,643 - Model - INFO - The number of training data is: 2228
+2022-11-16 20:54:31,644 - Model - INFO - The number of test data is: 456
+2022-11-16 20:55:51,194 - Model - INFO - Use pretrain model
+2022-11-16 20:55:51,195 - Model - INFO - **** Epoch 1 (15/20) ****
+2022-11-16 20:55:51,196 - Model - INFO - Learning rate:0.000700
+2022-11-20 16:58:46,454 - Model - INFO - PARAMETER ...
+2022-11-20 16:58:46,469 - Model - INFO - Namespace(batch_size=32, decay_rate=0.0001, epoch=20, gpu='0', learning_rate=0.001, log_dir='pointnet2_sem_seg', lr_decay=0.7, model='pointnet2_sem_seg', npoint=4096, optimizer='Adam', step_size=10, test_area=2)
+2022-11-20 16:59:54,221 - Model - INFO - The number of training data is: 1072
+2022-11-20 16:59:54,221 - Model - INFO - The number of test data is: 1155
+2022-11-20 17:00:20,365 - Model - INFO - Use pretrain model
+2022-11-20 17:00:20,366 - Model - INFO - **** Epoch 1 (15/20) ****
+2022-11-20 17:00:20,367 - Model - INFO - Learning rate:0.000700
+2022-11-21 21:14:53,469 - Model - INFO - PARAMETER ...
+2022-11-21 21:14:53,479 - Model - INFO - Namespace(batch_size=8, decay_rate=0.0001, epoch=5, gpu='0', learning_rate=0.001, log_dir='pointnet2_sem_seg', lr_decay=0.7, model='pointnet2_sem_seg', npoint=4096, optimizer='Adam', step_size=10, test_area=2)
+2022-11-21 21:16:04,573 - Model - INFO - The number of training data is: 1072
+2022-11-21 21:16:04,573 - Model - INFO - The number of test data is: 1155
+2022-11-21 21:16:27,407 - Model - INFO - Use pretrain model
