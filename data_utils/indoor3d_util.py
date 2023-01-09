@@ -47,10 +47,11 @@ def collect_point_label(anno_path, out_filename, file_format='txt'):
     points_list = []
     for f in glob.glob(os.path.join(anno_path, '*.txt')):
         cls = os.path.basename(f).split('_')[0]
-        print(f)
+
         if cls not in g_classes: # note: in some room there is 'staris' class..
             cls = 'clutter'
-
+            continue
+        print(f)
         points = np.loadtxt(f)
         labels = np.ones((points.shape[0],1)) * g_class2label[cls]
         points_list.append(np.concatenate([points, labels], 1)) # Nx7

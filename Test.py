@@ -112,24 +112,64 @@ def resolveZaoDian(a,outPutName):
     # plt.show()
 
 if __name__ == '__main__':
+    from matplotlib import pyplot as plt
+
+    plt.cla()
+    plt.title('Train ACC----epoch', fontsize=20)
+    junyun_acc = [0.3465895727666885,
+                  0.43511307801251636,
+                  0.5032799206479057,
+                  0.4998261616492147,
+                  0.4933003530452389,
+                  0.47329663980693715,
+                  0.513860253139316,
+                  0.5120833631585405,
+                  0.4458859428685373,
+                  0.5285193957583443,
+                  ]
+    suiji_acc=[0.320531,
+     0.304662,
+     0.379930,
+     0.402213,
+     0.447914,
+     0.453933,
+     0.472064,
+     0.483362,
+     0.492772,
+     0.497464,
+     ]
+    a = [1,2,3,4,5,6,7,8,9,10]
+    plt.plot(a, junyun_acc, '.-',label='average')
+    plt.plot(a, suiji_acc, '.-',label='random')
+    plt.xlabel('epoch', fontsize=20)
+    plt.ylabel('Train ACC', fontsize=20)
+    plt.legend()
+    # plt.savefig("data/pic/Train_loss.png")
+    plt.show()
 
 
+
+    # f = open('data/draw1.txt', mode='w')
+    # data = [12, 45, 34, 2]
+    # for i in data:
+    #     f.write(str(i) + '\n')
+    # f.close()
 
     # resolveZaoDian(GaussFilter(),)
     #resolveZaoDian()
 
-    train_list = os.listdir(path)
-    for i in range(len(train_list)):
-        pic_list = os.listdir(path + f"{i}")
-        image_processing(path + str(i) + '/a.jpg',200,400,'resizeA')
-        image_processing(path + str(i) + '/b.jpg',200,400,'resizeB')
-        result=resolveRGB(GaussFilter('data/resizeA.jpg'))
-        # resolveZaoDian(GaussFilter('data/resizeA.jpg'),'resizeA')
-        # cv2.imwrite('data/resizeB.jpg', GaussFilter('data/resizeB.jpg'))
-        custom_blur_demo(result,'data/resizeA_ruiHua.jpg')
-        image_processing('data/resizeA_ruiHua.jpg', 200, 400, 'resizeA_ruiHua')
-
-
-
-        image_Splicing('data/resizeA_ruiHua.jpg','data/resizeB.jpg', i)
-        print(i)
+    # train_list = os.listdir(path)
+    # for i in range(len(train_list)):
+    #     pic_list = os.listdir(path + f"{i}")
+    #     image_processing(path + str(i) + '/a.jpg',200,400,'resizeA')
+    #     image_processing(path + str(i) + '/b.jpg',200,400,'resizeB')
+    #     result=resolveRGB(GaussFilter('data/resizeA.jpg'))
+    #     # resolveZaoDian(GaussFilter('data/resizeA.jpg'),'resizeA')
+    #     # cv2.imwrite('data/resizeB.jpg', GaussFilter('data/resizeB.jpg'))
+    #     custom_blur_demo(result,'data/resizeA_ruiHua.jpg')
+    #     image_processing('data/resizeA_ruiHua.jpg', 200, 400, 'resizeA_ruiHua')
+    #
+    #
+    #
+    #     image_Splicing('data/resizeA_ruiHua.jpg','data/resizeB.jpg', i)
+    #     print(i)

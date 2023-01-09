@@ -28,3 +28,8 @@ def draw_fig(list,name,epoch):
         plt.grid()
         plt.savefig("data/pic/Train _accuracy.png")
         plt.show()
+    f = open('data/draw_' + name + '.txt', mode='w')
+    data = list
+    for i in data:
+        f.write(str(i) + '\n')
+    f.close()

@@ -23,8 +23,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = BASE_DIR
 sys.path.append(os.path.join(ROOT_DIR, 'models'))
 # /root/autodl-tmp
-classes = ['ceiling', 'floor', 'wall', 'beam', 'column', 'window', 'door', 'table', 'chair', 'sofa', 'bookcase',
-           'board', 'clutter']
+# 将十三分类改成5分类
+# classes = ['ceiling', 'floor', 'wall', 'beam', 'column', 'window', 'door', 'table', 'chair', 'sofa', 'bookcase',
+#            'board', 'clutter']
+classes = ['floor', 'table', 'chair', 'sofa', 'bookcase']
 # {{'ceiling': 0, 'floor': 1, 'wall': 2, 'beam': 3, 'column': 4, 'window': 5, 'door': 6, 'table': 7, 'chair': 8, 'sofa': 9, 'bookcase': 10, 'board': 11, 'clutter': 12}}
 class2label = {cls: i for i, cls in enumerate(classes)}
 seg_classes = class2label
@@ -41,7 +43,7 @@ def parse_args():
     parser = argparse.ArgumentParser('Model')
     parser.add_argument('--model', type=str, default='pointnet_sem_seg', help='model name [default: pointnet_sem_seg]')
     parser.add_argument('--batch_size', type=int, default=8, help='Batch Size during training [default: 16]')
-    parser.add_argument('--epoch', default=5, type=int, help='Epoch to run [default: 32]')
+    parser.add_argument('--epoch', default=20, type=int, help='Epoch to run [default: 32]')
     parser.add_argument('--learning_rate', default=0.001, type=float, help='Initial learning rate [default: 0.001]')
     parser.add_argument('--gpu', type=str, default='0', help='GPU to use [default: GPU 0]')
     parser.add_argument('--optimizer', type=str, default='Adam', help='Adam or SGD [default: Adam]')
@@ -92,15 +94,16 @@ def main(args):
     log_string(args)
 
     # 开始数据加载
-    root = 'data/stanford_indoor3d/'
+    root = 'data/stanford_indoor3d_myself/'
     # 13分类
-    NUM_CLASSES = 13
+    # NUM_CLASSES = 13
+    NUM_CLASSES = 5
     NUM_POINT = args.npoint
     BATCH_SIZE = args.batch_size
     print("start loading training data ...")
-    TRAIN_DATASET = S3DISDataset(split='train', data_root=root, num_point=NUM_POINT, test_area=args.test_area, block_size=1.0, sample_rate=0.1, transform=None)
+    TRAIN_DATASET = S3DISDataset(split='train', data_root=root, num_point=NUM_POINT, test_area=args.test_area, block_size=1.0, sample_rate=0.01, transform=None)
     print("start loading test data ...")
-    TEST_DATASET = S3DISDataset(split='test', data_root=root, num_point=NUM_POINT, test_area=args.test_area, block_size=1.0, sample_rate=0.1, transform=None)
+    TEST_DATASET = S3DISDataset(split='test', data_root=root, num_point=NUM_POINT, test_area=args.test_area, block_size=1.0, sample_rate=0.01, transform=None)
     trainDataLoader = torch.utils.data.DataLoader(TRAIN_DATASET, batch_size=BATCH_SIZE, shuffle=True, num_workers=0,pin_memory=True, drop_last=True,worker_init_fn=lambda x: np.random.seed(x + int(time.time())))
     testDataLoader = torch.utils.data.DataLoader(TEST_DATASET, batch_size=BATCH_SIZE, shuffle=False, num_workers=0,pin_memory=True, drop_last=True)
     weights = torch.Tensor(TRAIN_DATASET.labelweights).cuda()
@@ -203,8 +206,11 @@ def main(args):
             # batch_label为实际的标签
             batch_label = target.view(-1, 1)[:, 0].cpu().data.numpy()
             target = target.view(-1, 1)[:, 0]
+            # criterion为常用的交叉熵损失函数
             loss = criterion(seg_pred, target, trans_feat, weights)
+            # 求导 https://blog.csdn.net/shenjianhua005/article/details/123971915
             loss.backward()
+            #更新权重
             optimizer.step()
             # 取每个预测点的13分类中的最大值，当作该点的最终预测值pred_choice
             pred_choice = seg_pred.cpu().data.max(1)[1].numpy()

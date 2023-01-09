@@ -1,12 +1,9 @@
 import os
 import numpy as np
-
-
 from tqdm import tqdm
 from torch.utils.data import Dataset
-
 from data_utils import CaiYang
-
+type_size=5
 
 class S3DISDataset(Dataset):
     def __init__(self, split='train', data_root='trainval_fullarea', num_point=4096, test_area=5, block_size=1.0, sample_rate=00.1, transform=None):
@@ -17,9 +14,9 @@ class S3DISDataset(Dataset):
         # 将'data/stanford_indoor3d/'路径下的文件排序
         rooms = sorted(os.listdir(data_root))
         rooms = [room for room in rooms if 'Area_' in room]
-        rooms = [room for room in rooms if 'Area_5' not in room]
-        rooms = [room for room in rooms if 'Area_4' not in room]
-        rooms = [room for room in rooms if 'Area_3' not in room]
+        # rooms = [room for room in rooms if 'Area_5' not in room]
+        # rooms = [room for room in rooms if 'Area_4' not in room]
+        # rooms = [room for room in rooms if 'Area_3' not in room]
         # 构建测试集或训练集的数据的文件名（转换好的npy），放在room里，默认区域5为测试集
         if split == 'train':
             rooms_split = [room for room in rooms if not 'Area_{}'.format(test_area) in room]
@@ -29,15 +26,27 @@ class S3DISDataset(Dataset):
         self.room_points, self.room_labels = [], [] #每个房间的点云和标签
         self.room_coord_min, self.room_coord_max = [], [] #每个房间的最大值和最小值？
         num_point_all = [] #初始化每个房间点的总数的列表
-        labelweights = np.zeros(13) #初始标签权重
+        labelweights = np.zeros(type_size) #初始标签权重
 # tqdm 可视化进度条,每个NPY为一个房间，将每个房间（97个）的point（xyzrgb），label，max，min，都存在self里
         for room_name in tqdm(rooms_split, total=len(rooms_split)):
             room_path = os.path.join(data_root, room_name)
             room_data = np.load(room_path)  # 一个小房间内的xyzrgbl, N*7
             # 将np.array的数组，取索引从0到6的[:, 0: 6]。[:, 6]：取索引为7的,所以l为label？
             points, labels = room_data[:, 0:6], room_data[:, 6]  # xyzrgb, N*6; l, N
+            #没办法了，做个映射吧 一共0，1，2，6，12这五个标签。映射成01234
+            # tmp=[]
+            # for i in labels:
+            #     if i == 6:
+            #         tmp.append(np.float64(3.0))
+            #         continue
+            #     if i == 12:
+            #         tmp.append(np.float64(4.0))
+            #         continue
+            #     else:
+            #         tmp.append(i)
+            # labels=np.array(tmp)
             # histogram为统计直方图，这里是统计单个房间的所有点占14分类的比例（所有点放入14个桶中），为后面加权计算做准备
-            tmp, _ = np.histogram(labels, range(14))
+            tmp, _ = np.histogram(labels, range(6)) # 13分类更改14-->6
             labelweights += tmp
             # 寻找该房间中所有xyz的最小值和最大值,把标签，点云数据，最大最小值，点的数量，都赋给了self？
             coord_min, coord_max = np.amin(points, axis=0)[:3], np.amax(points, axis=0)[:3]
@@ -86,12 +95,10 @@ class S3DISDataset(Dataset):
         # TODO 改进采样算法
         if point_idxs.size >= self.num_point:
             # 原取样方法
-            # selected_point_idxs = np.random.choice(point_idxs, self.num_point, replace=False)
-            # selected_points = points[selected_point_idxs, :]
-
+            selected_point_idxs = np.random.choice(point_idxs, self.num_point, replace=False)
+            selected_points = points[selected_point_idxs, :]
             # 改进后
-            ids = np.random.choice(point_idxs, int(point_idxs.size/self.num_point)*self.num_point, replace=False)
-            selected_points,selected_point_idxs = CaiYang.JunyunCaiyang(points[ids, :][:, 0:3],points[ids, :][:, 3:7],self.num_point,ids)
+            # selected_points,selected_point_idxs = CaiYang.JunyunCaiyang(points,self.num_point,point_idxs)
         else:
             # 通常不会走这条，后续看情况再改
             selected_point_idxs = np.random.choice(point_idxs, self.num_point, replace=True)
@@ -99,7 +106,7 @@ class S3DISDataset(Dataset):
         # normalize selected_points为选中的4096个xyzrgb
           # num_point * 6
         # 返回一个特定形状的用0填充的数组，用于处理数据
-        current_points = np.zeros((self.num_point, 9))  # num_point * 9
+        current_points = np.zeros((selected_points.shape[0], 9))  # num_point * 9
         current_points[:, 6] = selected_points[:, 0] / self.room_coord_max[room_idx][0]
         current_points[:, 7] = selected_points[:, 1] / self.room_coord_max[room_idx][1]
         current_points[:, 8] = selected_points[:, 2] / self.room_coord_max[room_idx][2]
@@ -145,7 +152,7 @@ class ScannetDatasetWholeScene():
             self.room_coord_min.append(coord_min), self.room_coord_max.append(coord_max)
         assert len(self.scene_points_list) == len(self.semantic_labels_list)
 
-        labelweights = np.zeros(13)
+        labelweights = np.zeros(type_size)
         for seg in self.semantic_labels_list:
             tmp, _ = np.histogram(seg, range(14))
             self.scene_points_num.append(seg.shape[0])
@@ -192,7 +199,6 @@ class ScannetDatasetWholeScene():
                 data_batch = np.concatenate((data_batch, normlized_xyz), axis=1)
                 label_batch = labels[point_idxs].astype(int)
                 batch_weight = self.labelweights[label_batch]
-
                 data_room = np.vstack([data_room, data_batch]) if data_room.size else data_batch
                 label_room = np.hstack([label_room, label_batch]) if label_room.size else label_batch
                 sample_weight = np.hstack([sample_weight, batch_weight]) if label_room.size else batch_weight
@@ -207,9 +213,8 @@ class ScannetDatasetWholeScene():
         return len(self.scene_points_list)
 
 if __name__ == '__main__':
-    data_root = '/data/yxu/PointNonLocal/data/stanford_indoor3d/'
+    data_root = '/data/yxu/PointNonLocal/data/stanford_indoor3d_myself/'
     num_point, test_area, block_size, sample_rate = 4096, 5, 1.0, 0.01
-
     point_data = S3DISDataset(split='train', data_root=data_root, num_point=num_point, test_area=test_area, block_size=block_size, sample_rate=sample_rate, transform=None)
     print('point data size:', point_data.__len__())
     print('point data 0 shape:', point_data.__getitem__(0)[0].shape)
