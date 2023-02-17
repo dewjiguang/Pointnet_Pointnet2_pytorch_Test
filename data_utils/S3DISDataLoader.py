@@ -6,7 +6,7 @@ from data_utils import CaiYang
 type_size=5
 
 class S3DISDataset(Dataset):
-    def __init__(self, split='train', data_root='trainval_fullarea', num_point=4096, test_area=5, block_size=1.0, sample_rate=00.1, transform=None):
+    def __init__(self, split='train', data_root='trainval_fullarea', num_point=4096, test_area=5, block_size=1.0, sample_rate=1, transform=None):
         super().__init__()
         self.num_point = num_point #4096 多少个点一组？
         self.block_size = block_size #1.0 采样密度？1为全采样？
@@ -154,7 +154,7 @@ class ScannetDatasetWholeScene():
 
         labelweights = np.zeros(type_size)
         for seg in self.semantic_labels_list:
-            tmp, _ = np.histogram(seg, range(14))
+            tmp, _ = np.histogram(seg, range(6))
             self.scene_points_num.append(seg.shape[0])
             labelweights += tmp
         labelweights = labelweights.astype(np.float32)

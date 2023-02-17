@@ -101,7 +101,7 @@ def main(args):
     NUM_POINT = args.npoint
     BATCH_SIZE = args.batch_size
     print("start loading training data ...")
-    TRAIN_DATASET = S3DISDataset(split='train', data_root=root, num_point=NUM_POINT, test_area=args.test_area, block_size=1.0, sample_rate=0.01, transform=None)
+    TRAIN_DATASET = S3DISDataset(split='train', data_root=root, num_point=NUM_POINT, test_area=args.test_area, block_size=1.0, sample_rate=0.1, transform=None)
     print("start loading test data ...")
     TEST_DATASET = S3DISDataset(split='test', data_root=root, num_point=NUM_POINT, test_area=args.test_area, block_size=1.0, sample_rate=0.01, transform=None)
     trainDataLoader = torch.utils.data.DataLoader(TRAIN_DATASET, batch_size=BATCH_SIZE, shuffle=True, num_workers=0,pin_memory=True, drop_last=True,worker_init_fn=lambda x: np.random.seed(x + int(time.time())))
@@ -314,8 +314,11 @@ def main(args):
                 log_string('Saving model....')
             log_string('Best mIoU: %f' % best_iou)
         global_epoch += 1
-    draw_fig(Draw_loss,'loss',args.epoch)
-    draw_fig(Draw_acc,'acc',args.epoch)
+    pic_dir = experiment_dir.joinpath('pic/')
+    pic_dir.mkdir(exist_ok=True)
+
+    draw_fig(Draw_loss,'loss',args.epoch,str(pic_dir) )
+    draw_fig(Draw_acc,'acc',args.epoch,str(pic_dir) )
 
 if __name__ == '__main__':
     args = parse_args()

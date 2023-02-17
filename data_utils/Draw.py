@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 
 Loss_list = []  #存储每次epoch损失值
 
-def draw_fig(list,name,epoch):
+def draw_fig(list,name,epoch,picdir):
     # 我这里迭代了200次，所以x的取值范围为(0，200)，然后再将每次相对应的准确率以及损失率附在x上
     x1 = range(1, epoch+1)
     print(x1)
@@ -18,6 +18,7 @@ def draw_fig(list,name,epoch):
         plt.ylabel('Train loss', fontsize=20)
         plt.grid()
         plt.savefig("data/pic/Train_loss.png")
+        plt.savefig(picdir + "/Train_loss.png")
         plt.show()
     elif name =="acc":
         plt.cla()
@@ -26,7 +27,8 @@ def draw_fig(list,name,epoch):
         plt.xlabel('epoch', fontsize=20)
         plt.ylabel('Train accuracy', fontsize=20)
         plt.grid()
-        plt.savefig("data/pic/Train _accuracy.png")
+        plt.savefig("data/pic/Train_accuracy.png")
+        plt.savefig(picdir + "/Train_accuracy.png")
         plt.show()
     f = open('data/draw_' + name + '.txt', mode='w')
     data = list

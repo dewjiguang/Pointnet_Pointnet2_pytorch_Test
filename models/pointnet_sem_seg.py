@@ -57,8 +57,14 @@ class get_model(nn.Module):
     def __init__(self, num_class):
         super(get_model, self).__init__()
         self.k = num_class
+        #k：k分类
+        # 猜测PointNetEncoder为pointNet结构图上边那一大部分的升维池化提取特征部分的集合，他给封装了。
         self.feat = PointNetEncoder(global_feat=False, feature_transform=True, channel=9)
+        #下面这一部分是对每个点的1088个特征进行一维卷积，最终直接卷成k分类个，看每个的概率那个大就分到哪一类
+        #输入数据的Tensor为8*1088*4096 这是因为，一维卷积，默认把第二个参数当成in_channels，这里直接构建成这种tensor就不用转换了
+        # 所以这本质上还是每次八组，每组4096个点，每个点有1088特征。
         self.conv1 = torch.nn.Conv1d(1088, 512, 1)
+        # dilation=2不增加计算量的前提下，增大感受野 若卷积核改为5的话，为保证尺寸不变，加上padding=2
         self.conv2 = torch.nn.Conv1d(512, 256, 1)
         self.conv3 = torch.nn.Conv1d(256, 128, 1)
         self.conv4 = torch.nn.Conv1d(128, self.k, 1)
@@ -68,16 +74,57 @@ class get_model(nn.Module):
         self.bn3 = nn.BatchNorm1d(128)
         # self.ca = ChannelAttention(self.k)
         # self.sa = SpatialAttention()
+        self.avg_pool = nn.AdaptiveAvgPool1d(1)
+        # 最大池化
+        self.max_pool = nn.AdaptiveMaxPool1d(1)
+
+        # 通道先降维后恢复到原来的维数
+        self.fc1 = nn.Conv1d(1088, 1088 // 16, 1, bias=True)
+        self.relu1 = nn.ReLU()
+        self.fc2 = nn.Conv1d(1088 // 16, 1088, 1, bias=True)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         batchsize = x.size()[0] #维度？
         n_pts = x.size()[2]
         x, trans, trans_feat = self.feat(x)
+
+        avg = self.avg_pool(x)
+        # 多层感知机mlp (2,512,8,8) -> (2,512,1,1) -> (2,512/ration,1,1) -> (2,512,1,1)
+        # (2,512,1,1) -> (2,512/ratio,1,1)
+        avg = self.fc1(avg)
+        avg = self.relu1(avg)
+        # (2,512/ratio,1,1) -> (2,512,1,1)
+        avg_out = self.fc2(avg)
+
+        # 最大池化一支
+        # (2,512,8,8) -> (2,512,1,1)
+        max = self.max_pool(x)
+        # 多层感知机
+        # (2,512,1,1) -> (2,512/ratio,1,1)
+        max = self.fc1(max)
+        max = self.relu1(max)
+        # (2,512/ratio,1,1) -> (2,512,1,1)
+        max_out = self.fc2(max)
+
+        # (2,512,1,1) + (2,512,1,1) -> (2,512,1,1)
+        out = avg_out + max_out
+        x= x * self.sigmoid(out)
+
         x = F.relu(self.bn1(self.conv1(x)))
         x = F.relu(self.bn2(self.conv2(x)))
         x = F.relu(self.bn3(self.conv3(x)))
         x = self.conv4(x)
         x = x.transpose(2,1).contiguous()
+        # transpose:交换两个矩阵的两个维度，例如：
+        # >> > x = torch.randn(2, 3)
+        # tensor([[1.0028, -0.9893, 0.5809],
+        #         [-0.1669, 0.7299, 0.4942]])
+        # >> > torch.transpose(x, 0, 1)
+        # tensor([[1.0028, -0.1669],
+        #         [-0.9893, 0.7299],
+        #         [0.5809, 0.4942]])
+        # contiguous为将处理后的tensor变为内存连续
         x = F.log_softmax(x.view(-1,self.k), dim=-1)
         x = x.view(batchsize, n_pts, self.k)
         # x = self.ca(x) * x
