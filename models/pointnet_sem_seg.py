@@ -66,12 +66,21 @@ class get_model(nn.Module):
         self.conv1 = torch.nn.Conv1d(1088, 512, 1)
         # dilation=2不增加计算量的前提下，增大感受野 若卷积核改为5的话，为保证尺寸不变，加上padding=2
         self.conv2 = torch.nn.Conv1d(512, 256, 1)
-        self.conv3 = torch.nn.Conv1d(256, 128, 1)
-        self.conv4 = torch.nn.Conv1d(128, self.k, 1)
+        self.max_pool1 = nn.AdaptiveMaxPool1d(128)
+
+        self.conv3 = torch.nn.Conv1d(128, 64, 1)
+        self.conv4 = torch.nn.Conv1d(64, 32, 1)
+        self.max_pool2 = nn.AdaptiveMaxPool1d(16)
+
+        self.fcn1 = nn.Linear(16, 64)
+        self.fcn2 = nn.Linear(64, self.k)
+
         # BatchNorm1d  用于维持归一化的一个方法，具体原理不用知道，反正就是方便训练的
         self.bn1 = nn.BatchNorm1d(512)
         self.bn2 = nn.BatchNorm1d(256)
-        self.bn3 = nn.BatchNorm1d(128)
+        # self.bn3 = nn.BatchNorm1d(128)
+        self.bn3 = nn.BatchNorm1d(64)
+        self.bn4 = nn.BatchNorm1d(32)
         # self.ca = ChannelAttention(self.k)
         # self.sa = SpatialAttention()
         self.avg_pool = nn.AdaptiveAvgPool1d(1)
@@ -89,33 +98,32 @@ class get_model(nn.Module):
         n_pts = x.size()[2]
         x, trans, trans_feat = self.feat(x)
 
+        # 注意力模块
         avg = self.avg_pool(x)
-        # 多层感知机mlp (2,512,8,8) -> (2,512,1,1) -> (2,512/ration,1,1) -> (2,512,1,1)
-        # (2,512,1,1) -> (2,512/ratio,1,1)
         avg = self.fc1(avg)
         avg = self.relu1(avg)
-        # (2,512/ratio,1,1) -> (2,512,1,1)
         avg_out = self.fc2(avg)
-
-        # 最大池化一支
-        # (2,512,8,8) -> (2,512,1,1)
         max = self.max_pool(x)
-        # 多层感知机
-        # (2,512,1,1) -> (2,512/ratio,1,1)
         max = self.fc1(max)
         max = self.relu1(max)
-        # (2,512/ratio,1,1) -> (2,512,1,1)
         max_out = self.fc2(max)
-
-        # (2,512,1,1) + (2,512,1,1) -> (2,512,1,1)
         out = avg_out + max_out
         x= x * self.sigmoid(out)
 
         x = F.relu(self.bn1(self.conv1(x)))
         x = F.relu(self.bn2(self.conv2(x)))
+        x = x.transpose(2, 1).contiguous()
+        x = self.max_pool1(x)
+        x = x.transpose(2, 1).contiguous()
         x = F.relu(self.bn3(self.conv3(x)))
-        x = self.conv4(x)
-        x = x.transpose(2,1).contiguous()
+        x = F.relu(self.bn4(self.conv4(x)))
+        x = x.transpose(2, 1).contiguous()
+        x = self.max_pool2(x)
+        # x = x.transpose(2, 1).contiguous()
+        # x = self.flatten(x)
+        x = self.fcn1(x)
+        x = self.fcn2(x)
+
         # transpose:交换两个矩阵的两个维度，例如：
         # >> > x = torch.randn(2, 3)
         # tensor([[1.0028, -0.9893, 0.5809],
