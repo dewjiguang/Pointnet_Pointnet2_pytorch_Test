@@ -63,24 +63,26 @@ class get_model(nn.Module):
         #下面这一部分是对每个点的1088个特征进行一维卷积，最终直接卷成k分类个，看每个的概率那个大就分到哪一类
         #输入数据的Tensor为8*1088*4096 这是因为，一维卷积，默认把第二个参数当成in_channels，这里直接构建成这种tensor就不用转换了
         # 所以这本质上还是每次八组，每组4096个点，每个点有1088特征。
-        self.conv1 = torch.nn.Conv1d(1088, 512, 1)
+        # 输出通道就是卷积核个数，好像有点懂了，为啥一维卷积卷的是第二个参数，因为第二个参数是卷积核个数，这里第三个参数没变是因为默认了卷积核大小为1
+        self.conv1 = torch.nn.Conv1d(1088, 32, 3, padding=1)
         # dilation=2不增加计算量的前提下，增大感受野 若卷积核改为5的话，为保证尺寸不变，加上padding=2
-        self.conv2 = torch.nn.Conv1d(512, 256, 1)
-        self.max_pool1 = nn.AdaptiveMaxPool1d(128)
+        self.conv2 = torch.nn.Conv1d(32, 64, 3, padding=1)
+        self.max_pool1 = nn.AdaptiveMaxPool1d(4096)
 
-        self.conv3 = torch.nn.Conv1d(128, 64, 1)
-        self.conv4 = torch.nn.Conv1d(64, 32, 1)
-        self.max_pool2 = nn.AdaptiveMaxPool1d(16)
+        self.conv3 = torch.nn.Conv1d(64, 128, 5, padding=2)
+        self.conv4 = torch.nn.Conv1d(128, 128, 3, padding=1)
+        self.max_pool2 = nn.AdaptiveMaxPool1d(4096)
 
-        self.fcn1 = nn.Linear(16, 64)
-        self.fcn2 = nn.Linear(64, self.k)
+        self.fcn1 = nn.Linear(128, 256)
+        self.fcn2 = nn.Linear(256, 128)
+        self.fcn3 = nn.Linear(128, self.k)
 
         # BatchNorm1d  用于维持归一化的一个方法，具体原理不用知道，反正就是方便训练的
-        self.bn1 = nn.BatchNorm1d(512)
-        self.bn2 = nn.BatchNorm1d(256)
+        self.bn1 = nn.BatchNorm1d(32)
+        self.bn2 = nn.BatchNorm1d(64)
         # self.bn3 = nn.BatchNorm1d(128)
-        self.bn3 = nn.BatchNorm1d(64)
-        self.bn4 = nn.BatchNorm1d(32)
+        self.bn3 = nn.BatchNorm1d(128)
+        self.bn4 = nn.BatchNorm1d(128)
         # self.ca = ChannelAttention(self.k)
         # self.sa = SpatialAttention()
         self.avg_pool = nn.AdaptiveAvgPool1d(1)
@@ -112,17 +114,19 @@ class get_model(nn.Module):
 
         x = F.relu(self.bn1(self.conv1(x)))
         x = F.relu(self.bn2(self.conv2(x)))
-        x = x.transpose(2, 1).contiguous()
-        x = self.max_pool1(x)
-        x = x.transpose(2, 1).contiguous()
+        # x = x.transpose(2, 1).contiguous()
+        # x = self.max_pool1(x)  #TODO 池化转换这里可能有问题 去掉试一下
+        # x = x.transpose(2, 1).contiguous()
         x = F.relu(self.bn3(self.conv3(x)))
         x = F.relu(self.bn4(self.conv4(x)))
-        x = x.transpose(2, 1).contiguous()
-        x = self.max_pool2(x)
+
+        # x = self.max_pool2(x)
         # x = x.transpose(2, 1).contiguous()
         # x = self.flatten(x)
+        x = x.transpose(2, 1).contiguous()
         x = self.fcn1(x)
         x = self.fcn2(x)
+        x = self.fcn3(x)
 
         # transpose:交换两个矩阵的两个维度，例如：
         # >> > x = torch.randn(2, 3)
