@@ -3,6 +3,10 @@ import torch.nn as nn
 import torch.nn.parallel
 import torch.utils.data
 import torch.nn.functional as F
+
+from models.Attention import Attention
+from models.CBAM import CBAM
+from models.SelfAttention import SelfAttention
 from pointnet_utils import PointNetEncoder, feature_transform_reguliarzer
 import torch.nn as nn
 # import math
@@ -53,6 +57,8 @@ import torch.nn as nn
 #         return self.sigmoid(x)
 
 
+
+
 class get_model(nn.Module):
     def __init__(self, num_class):
         super(get_model, self).__init__()
@@ -64,69 +70,39 @@ class get_model(nn.Module):
         #输入数据的Tensor为8*1088*4096 这是因为，一维卷积，默认把第二个参数当成in_channels，这里直接构建成这种tensor就不用转换了
         # 所以这本质上还是每次八组，每组4096个点，每个点有1088特征。
         self.conv1 = torch.nn.Conv1d(1088, 512, 1)
+        self.cbam = CBAM(1088)
+        # self.attention = Attention(1088)
         # dilation=2不增加计算量的前提下，增大感受野 若卷积核改为5的话，为保证尺寸不变，加上padding=2
         self.conv2 = torch.nn.Conv1d(512, 256, 1)
         self.conv3 = torch.nn.Conv1d(256, 128, 1)
         self.conv4 = torch.nn.Conv1d(128, self.k, 1)
-        #下面这一部分是对每个点的1088个特征进行一维卷积，最终直接卷成k分类个，看每个的概率那个大就分到哪一类
-        #输入数据的Tensor为8*1088*4096 这是因为，一维卷积，默认把第二个参数当成in_channels，这里直接构建成这种tensor就不用转换了
-        # 所以这本质上还是每次八组，每组4096个点，每个点有1088特征。
-        # 输出通道就是卷积核个数，好像有点懂了，为啥一维卷积卷的是第二个参数，因为第二个参数是卷积核个数，这里第三个参数没变是因为默认了卷积核大小为1
-        self.conv1 = torch.nn.Conv1d(1088, 32, 3, padding=1)
-        # dilation=2不增加计算量的前提下，增大感受野 若卷积核改为5的话，为保证尺寸不变，加上padding=2
-        self.conv2 = torch.nn.Conv1d(32, 64, 3, padding=1)
-        self.max_pool1 = nn.AdaptiveMaxPool1d(4096)
-
-        self.conv3 = torch.nn.Conv1d(64, 128, 5, padding=2)
-        self.conv4 = torch.nn.Conv1d(128, 128, 3, padding=1)
-        self.max_pool2 = nn.AdaptiveMaxPool1d(4096)
-
-        self.fcn1 = nn.Linear(128, 256)
-        self.fcn2 = nn.Linear(256, 128)
-        self.fcn3 = nn.Linear(128, self.k)
-
         # BatchNorm1d  用于维持归一化的一个方法，具体原理不用知道，反正就是方便训练的
         self.bn1 = nn.BatchNorm1d(512)
         self.bn2 = nn.BatchNorm1d(256)
         self.bn3 = nn.BatchNorm1d(128)
-        # self.ca = ChannelAttention(self.k)
-        # self.sa = SpatialAttention()
-        self.avg_pool = nn.AdaptiveAvgPool1d(1)
-        # 最大池化
-        self.max_pool = nn.AdaptiveMaxPool1d(1)
-
-        # 通道先降维后恢复到原来的维数
-        self.fc1 = nn.Conv1d(1088, 1088 // 16, 1, bias=True)
-        self.relu1 = nn.ReLU()
-        self.fc2 = nn.Conv1d(1088 // 16, 1088, 1, bias=True)
-        self.sigmoid = nn.Sigmoid()
+        # self.avg_pool = nn.AdaptiveAvgPool1d(1)
+        # self.max_pool = nn.AdaptiveMaxPool1d(1)
+        # self.fc1 = nn.Conv1d(1088, 1088 // 16, 1, bias=True)
+        # self.relu1 = nn.ReLU()
+        # self.fc2 = nn.Conv1d(1088 // 16, 1088, 1, bias=True)
+        # self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         batchsize = x.size()[0] #维度？
         n_pts = x.size()[2]
         x, trans, trans_feat = self.feat(x)
-
-        avg = self.avg_pool(x)
-        # 多层感知机mlp (2,512,8,8) -> (2,512,1,1) -> (2,512/ration,1,1) -> (2,512,1,1)
-        # (2,512,1,1) -> (2,512/ratio,1,1)
-        avg = self.fc1(avg)
-        avg = self.relu1(avg)
-        # (2,512/ratio,1,1) -> (2,512,1,1)
-        avg_out = self.fc2(avg)
-
-        # 最大池化一支
-        # (2,512,8,8) -> (2,512,1,1)
-        max = self.max_pool(x)
-        # 多层感知机
-        # (2,512,1,1) -> (2,512/ratio,1,1)
-        max = self.fc1(max)
-        max = self.relu1(max)
-        # (2,512/ratio,1,1) -> (2,512,1,1)
-        max_out = self.fc2(max)
-
-        # (2,512,1,1) + (2,512,1,1) -> (2,512,1,1)
-        out = avg_out + max_out
-        x= x * self.sigmoid(out)
+        x = self.cbam(x)
+        # x = self.attention(x)
+        # avg = self.avg_pool(x)
+        # avg = self.fc1(avg)
+        # avg = self.relu1(avg)
+        # avg_out = self.fc2(avg)
+        # max = self.max_pool(x)
+        # max = self.fc1(max)
+        # max = self.relu1(max)
+        # max_out = self.fc2(max)
+        # out = avg_out + max_out
+        # x= x * self.sigmoid(out)
 
         x = F.relu(self.bn1(self.conv1(x)))
         x = F.relu(self.bn2(self.conv2(x)))

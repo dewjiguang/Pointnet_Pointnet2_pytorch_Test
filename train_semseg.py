@@ -42,8 +42,8 @@ def inplace_relu(m):
 def parse_args():
     parser = argparse.ArgumentParser('Model')
     parser.add_argument('--model', type=str, default='pointnet_sem_seg', help='model name [default: pointnet_sem_seg]')
-    parser.add_argument('--batch_size', type=int, default=8, help='Batch Size during training [default: 16]')
-    parser.add_argument('--epoch', default=20, type=int, help='Epoch to run [default: 32]')
+    parser.add_argument('--batch_size', type=int, default=8,                        help='Batch Size during training [default: 16]')
+    parser.add_argument('--epoch', default=30, type=int, help='Epoch to run [default: 32]')
     parser.add_argument('--learning_rate', default=0.001, type=float, help='Initial learning rate [default: 0.001]')
     parser.add_argument('--gpu', type=str, default='0', help='GPU to use [default: GPU 0]')
     parser.add_argument('--optimizer', type=str, default='Adam', help='Adam or SGD [default: Adam]')
@@ -323,3 +323,9 @@ def main(args):
 if __name__ == '__main__':
     args = parse_args()
     main(args)
+
+
+
+from matplotlib import pyplot as plt
+
+Loss_list = []  #存储每次epoch损失值
