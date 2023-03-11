@@ -106,14 +106,10 @@ class PointNetEncoder(nn.Module):
         self.conv1 = torch.nn.Conv1d(channel, 64, 1)
         self.conv2 = torch.nn.Conv1d(64, 128, 1)
         self.conv3 = torch.nn.Conv1d(128, 1024, 1)
-        self.conv4 = torch.nn.Conv1d(128, 256, 1)
-        self.conv5 = torch.nn.Conv1d(128, 512, 1)
         # 参数归一化，配合MLP
         self.bn1 = nn.BatchNorm1d(64)
         self.bn2 = nn.BatchNorm1d(128)
         self.bn3 = nn.BatchNorm1d(1024)
-        self.bn4 = nn.BatchNorm1d(256)
-        self.bn5 = nn.BatchNorm1d(512)
         # 这个用来判断是否复制全局特征（maxpooling后的1024维全局特征，分类问题就不用复制，
         # 分割问题就需要复制，pointnet_sem_seg的设置就是需要复制的）
         self.global_feat = global_feat
@@ -151,28 +147,14 @@ class PointNetEncoder(nn.Module):
         # 这里是第二个T-Net之后的MLP
         x = F.relu(self.bn2(self.conv2(x)))
         # 这里是第三个MLP，此时每个点到了1024维
-
-        #多尺度特征融合
-        x1 = self.bn3(self.conv3(x))
-        x1 = torch.max(x1, 2, keepdim=True)[0]
-        x1 = x1.view(-1, 1024)
-
-        x4 = self.bn4(self.conv4(x))
-        x4 = torch.max(x4, 2, keepdim=True)[0]
-        x4 = x4.view(-1, 256)
-
-        x5 = self.bn5(self.conv5(x))
-        x5 = torch.max(x5, 2, keepdim=True)[0]
-        x5 = x5.view(-1, 512)
-
+        x = self.bn3(self.conv3(x))
+        x = torch.max(x, 2, keepdim=True)[0]
+        x = x.view(-1, 1024)
         if self.global_feat:
             return x, trans, trans_feat
         else:
-            x1 = x1.view(-1, 1024, 1).repeat(1, 1, N)
-            # x4 = x4.view(-1, 256, 1).repeat(1, 1, N)
-            # x5 = x5.view(-1, 512, 1).repeat(1, 1, N)
-            # return torch.cat([x1, x5, x4, pointfeat], 1), trans, trans_feat
-            return torch.cat([x1, pointfeat], 1), trans, trans_feat
+            x = x.view(-1, 1024, 1).repeat(1, 1, N)
+            return torch.cat([x, pointfeat], 1), trans, trans_feat
 
 
 def feature_transform_reguliarzer(trans):
