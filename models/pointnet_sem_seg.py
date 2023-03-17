@@ -3,10 +3,6 @@ import torch.nn as nn
 import torch.nn.parallel
 import torch.utils.data
 import torch.nn.functional as F
-
-from models.Attention import Attention
-from models.CBAM import CBAM
-from models.SelfAttention import SelfAttention
 from pointnet_utils import PointNetEncoder, feature_transform_reguliarzer
 import torch.nn as nn
 # import math
@@ -55,8 +51,74 @@ import torch.nn as nn
 #         x = torch.cat([avg_out, max_out], dim=1)
 #         x = self.conv1(x)
 #         return self.sigmoid(x)
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
+class ChannelAttention(nn.Module):
+    def __init__(self, in_planes, reduction_ratio=16):
+        super(ChannelAttention, self).__init__()
+        self.avg_pool = nn.AdaptiveAvgPool1d(1)
+        self.max_pool = nn.AdaptiveMaxPool1d(1)
+        self.fc1 = nn.Conv1d(in_planes, in_planes // reduction_ratio, 1, bias=False)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Conv1d(in_planes // reduction_ratio, in_planes, 1, bias=False)
+        self.sigmoid = nn.Sigmoid()
 
+    def forward(self, x):
+        avg_out = self.fc2(self.relu(self.fc1(self.avg_pool(x))))
+        max_out = self.fc2(self.relu(self.fc1(self.max_pool(x))))
+        out = avg_out + max_out
+        return self.sigmoid(out)
+
+class SpatialAttention(nn.Module):
+    def __init__(self, kernel_size=7):
+        super(SpatialAttention, self).__init__()
+        assert kernel_size in (3, 7), 'kernel size must be 3 or 7'
+        padding = 3 if kernel_size == 7 else 1
+        self.conv1 = nn.Conv1d(2, 1, kernel_size, padding=padding, bias=False)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        avg_out = torch.mean(x, dim=1, keepdim=True)
+        max_out, _ = torch.max(x, dim=1, keepdim=True)
+        x = torch.cat([avg_out, max_out], dim=1)
+        x = self.conv1(x)
+        return self.sigmoid(x)
+
+class CBAM(nn.Module):
+    def __init__(self, in_planes, reduction_ratio=16, kernel_size=7):
+        super().__init__()
+        self.ca = ChannelAttention(in_planes, reduction_ratio)
+        self.sa = SpatialAttention(kernel_size)
+
+    def forward(self, x):
+        out = x * self.ca(x)
+        out = out * self.sa(out)
+        return out
+
+# Example usage of the CBAM module
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.relu = nn.ReLU(inplace=True)
+        self.cbam = CBAM(64)
+        self.conv2 = nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(64)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.cbam(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = self.relu(x)
+        x = self.pool(x)
+        return x
 
 
 class get_model(nn.Module):
@@ -71,7 +133,6 @@ class get_model(nn.Module):
         # 所以这本质上还是每次八组，每组4096个点，每个点有1088特征。
         self.conv1 = torch.nn.Conv1d(1088, 512, 1)
         self.cbam = CBAM(1088)
-        # self.attention = Attention(1088)
         # dilation=2不增加计算量的前提下，增大感受野 若卷积核改为5的话，为保证尺寸不变，加上padding=2
         self.conv2 = torch.nn.Conv1d(512, 256, 1)
         self.conv3 = torch.nn.Conv1d(256, 128, 1)
@@ -92,7 +153,6 @@ class get_model(nn.Module):
         n_pts = x.size()[2]
         x, trans, trans_feat = self.feat(x)
         x = self.cbam(x)
-        # x = self.attention(x)
         # avg = self.avg_pool(x)
         # avg = self.fc1(avg)
         # avg = self.relu1(avg)

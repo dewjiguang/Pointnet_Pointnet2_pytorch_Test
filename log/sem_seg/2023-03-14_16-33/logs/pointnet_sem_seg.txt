@@ -1,0 +1,7 @@
+2023-03-14 16:33:19,411 - Model - INFO - PARAMETER ...
+2023-03-14 16:33:19,411 - Model - INFO - Namespace(batch_size=8, decay_rate=0.0001, epoch=30, gpu='0', learning_rate=0.001, log_dir=None, lr_decay=0.7, model='pointnet_sem_seg', npoint=4096, optimizer='Adam', step_size=10, test_area=2)
+2023-03-14 16:34:41,590 - Model - INFO - The number of training data is: 1623
+2023-03-14 16:34:41,591 - Model - INFO - The number of test data is: 32
+2023-03-14 16:34:42,944 - Model - INFO - No existing model, starting training from scratch...
+2023-03-14 16:35:30,694 - Model - INFO - **** Epoch 1 (1/30) ****
+2023-03-14 16:35:30,694 - Model - INFO - Learning rate:0.001000

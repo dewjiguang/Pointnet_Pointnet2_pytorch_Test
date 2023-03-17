@@ -1,0 +1,403 @@
+2023-03-01 12:02:40,147 - Model - INFO - PARAMETER ...
+2023-03-01 12:02:40,157 - Model - INFO - Namespace(batch_size=4, decay_rate=0.0001, epoch=20, gpu='0', learning_rate=0.001, log_dir=None, lr_decay=0.5, model='pointnet_sem_seg', npoint=4096, optimizer='Adam', step_size=4, test_area=2)
+2023-03-01 12:03:54,267 - Model - INFO - The number of training data is: 1623
+2023-03-01 12:03:54,267 - Model - INFO - The number of test data is: 32
+2023-03-01 12:03:55,517 - Model - INFO - No existing model, starting training from scratch...
+2023-03-01 12:04:15,637 - Model - INFO - **** Epoch 1 (1/20) ****
+2023-03-01 12:04:15,637 - Model - INFO - Learning rate:0.001000
+2023-03-01 12:06:25,210 - Model - INFO - Training mean loss: 2.372014
+2023-03-01 12:06:25,210 - Model - INFO - Training accuracy: 0.610762
+2023-03-01 12:06:25,210 - Model - INFO - Save model...
+2023-03-01 12:06:25,210 - Model - INFO - Saving at log\sem_seg\2023-03-01_12-02\checkpoints/model.pth
+2023-03-01 12:06:25,552 - Model - INFO - Saving model....
+2023-03-01 12:06:25,557 - Model - INFO - ---- EPOCH 001 EVALUATION ----
+2023-03-01 12:06:28,599 - Model - INFO - eval mean loss: 15.756314
+2023-03-01 12:06:28,599 - Model - INFO - eval point avg class IoU: 0.169704
+2023-03-01 12:06:28,599 - Model - INFO - eval point accuracy: 0.539337
+2023-03-01 12:06:28,599 - Model - INFO - eval point avg class acc: 0.367474
+2023-03-01 12:06:28,599 - Model - INFO - ------- IoU --------
+class floor          weight: 0.160, IoU: 0.789 
+class table          weight: 0.614, IoU: 0.059 
+class chair          weight: 0.024, IoU: 0.000 
+class sofa           weight: 0.184, IoU: 0.000 
+class bookcase       weight: 0.018, IoU: 0.000 
+
+2023-03-01 12:06:28,599 - Model - INFO - Eval mean loss: 15.756314
+2023-03-01 12:06:28,599 - Model - INFO - Eval accuracy: 0.539337
+2023-03-01 12:06:28,599 - Model - INFO - Save model...
+2023-03-01 12:06:28,599 - Model - INFO - Saving at log\sem_seg\2023-03-01_12-02\checkpoints/best_model.pth
+2023-03-01 12:06:28,738 - Model - INFO - Saving model....
+2023-03-01 12:06:28,747 - Model - INFO - Best mIoU: 0.169704
+2023-03-01 12:06:28,747 - Model - INFO - **** Epoch 2 (2/20) ****
+2023-03-01 12:06:28,747 - Model - INFO - Learning rate:0.001000
+2023-03-01 12:08:11,058 - Model - INFO - Training mean loss: 1.350524
+2023-03-01 12:08:11,058 - Model - INFO - Training accuracy: 0.623263
+2023-03-01 12:08:11,058 - Model - INFO - ---- EPOCH 002 EVALUATION ----
+2023-03-01 12:08:13,485 - Model - INFO - eval mean loss: 1.390870
+2023-03-01 12:08:13,485 - Model - INFO - eval point avg class IoU: 0.164864
+2023-03-01 12:08:13,485 - Model - INFO - eval point accuracy: 0.554962
+2023-03-01 12:08:13,485 - Model - INFO - eval point avg class acc: 0.351110
+2023-03-01 12:08:13,485 - Model - INFO - ------- IoU --------
+class floor          weight: 0.075, IoU: 0.603 
+class table          weight: 0.605, IoU: 0.000 
+class chair          weight: 0.033, IoU: 0.000 
+class sofa           weight: 0.286, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.221 
+
+2023-03-01 12:08:13,485 - Model - INFO - Eval mean loss: 1.390870
+2023-03-01 12:08:13,487 - Model - INFO - Eval accuracy: 0.554962
+2023-03-01 12:08:13,487 - Model - INFO - Best mIoU: 0.169704
+2023-03-01 12:08:13,487 - Model - INFO - **** Epoch 3 (3/20) ****
+2023-03-01 12:08:13,487 - Model - INFO - Learning rate:0.001000
+2023-03-01 12:10:02,397 - Model - INFO - Training mean loss: 1.308184
+2023-03-01 12:10:02,397 - Model - INFO - Training accuracy: 0.657440
+2023-03-01 12:10:02,402 - Model - INFO - ---- EPOCH 003 EVALUATION ----
+2023-03-01 12:10:04,892 - Model - INFO - eval mean loss: 130.631287
+2023-03-01 12:10:04,892 - Model - INFO - eval point avg class IoU: 0.102386
+2023-03-01 12:10:04,892 - Model - INFO - eval point accuracy: 0.342369
+2023-03-01 12:10:04,892 - Model - INFO - eval point avg class acc: 0.195450
+2023-03-01 12:10:04,892 - Model - INFO - ------- IoU --------
+class floor          weight: 0.160, IoU: 0.399 
+class table          weight: 0.557, IoU: 0.000 
+class chair          weight: 0.021, IoU: 0.000 
+class sofa           weight: 0.233, IoU: 0.000 
+class bookcase       weight: 0.030, IoU: 0.113 
+
+2023-03-01 12:10:04,892 - Model - INFO - Eval mean loss: 130.631287
+2023-03-01 12:10:04,892 - Model - INFO - Eval accuracy: 0.342369
+2023-03-01 12:10:04,892 - Model - INFO - Best mIoU: 0.169704
+2023-03-01 12:10:04,892 - Model - INFO - **** Epoch 4 (4/20) ****
+2023-03-01 12:10:04,892 - Model - INFO - Learning rate:0.001000
+2023-03-01 12:11:46,053 - Model - INFO - Training mean loss: 1.188918
+2023-03-01 12:11:46,053 - Model - INFO - Training accuracy: 0.677315
+2023-03-01 12:11:46,053 - Model - INFO - ---- EPOCH 004 EVALUATION ----
+2023-03-01 12:11:48,410 - Model - INFO - eval mean loss: 3470.114990
+2023-03-01 12:11:48,410 - Model - INFO - eval point avg class IoU: 0.134604
+2023-03-01 12:11:48,410 - Model - INFO - eval point accuracy: 0.481026
+2023-03-01 12:11:48,410 - Model - INFO - eval point avg class acc: 0.183524
+2023-03-01 12:11:48,410 - Model - INFO - ------- IoU --------
+class floor          weight: 0.106, IoU: 0.635 
+class table          weight: 0.634, IoU: 0.000 
+class chair          weight: 0.022, IoU: 0.000 
+class sofa           weight: 0.239, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.038 
+
+2023-03-01 12:11:48,410 - Model - INFO - Eval mean loss: 3470.114990
+2023-03-01 12:11:48,410 - Model - INFO - Eval accuracy: 0.481026
+2023-03-01 12:11:48,410 - Model - INFO - Best mIoU: 0.169704
+2023-03-01 12:11:48,410 - Model - INFO - **** Epoch 5 (5/20) ****
+2023-03-01 12:11:48,410 - Model - INFO - Learning rate:0.000500
+2023-03-01 12:13:28,519 - Model - INFO - Training mean loss: 1.096639
+2023-03-01 12:13:28,519 - Model - INFO - Training accuracy: 0.729239
+2023-03-01 12:13:28,519 - Model - INFO - ---- EPOCH 005 EVALUATION ----
+2023-03-01 12:13:31,194 - Model - INFO - eval mean loss: 6884.022949
+2023-03-01 12:13:31,196 - Model - INFO - eval point avg class IoU: 0.151628
+2023-03-01 12:13:31,196 - Model - INFO - eval point accuracy: 0.516510
+2023-03-01 12:13:31,196 - Model - INFO - eval point avg class acc: 0.230700
+2023-03-01 12:13:31,196 - Model - INFO - ------- IoU --------
+class floor          weight: 0.133, IoU: 0.656 
+class table          weight: 0.620, IoU: 0.000 
+class chair          weight: 0.011, IoU: 0.000 
+class sofa           weight: 0.236, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.102 
+
+2023-03-01 12:13:31,196 - Model - INFO - Eval mean loss: 6884.022949
+2023-03-01 12:13:31,196 - Model - INFO - Eval accuracy: 0.516510
+2023-03-01 12:13:31,196 - Model - INFO - Best mIoU: 0.169704
+2023-03-01 12:13:31,196 - Model - INFO - **** Epoch 6 (6/20) ****
+2023-03-01 12:13:31,196 - Model - INFO - Learning rate:0.000500
+2023-03-01 12:15:11,663 - Model - INFO - Training mean loss: 1.072590
+2023-03-01 12:15:11,663 - Model - INFO - Training accuracy: 0.707680
+2023-03-01 12:15:11,663 - Model - INFO - Save model...
+2023-03-01 12:15:11,663 - Model - INFO - Saving at log\sem_seg\2023-03-01_12-02\checkpoints/model.pth
+2023-03-01 12:15:11,844 - Model - INFO - Saving model....
+2023-03-01 12:15:11,844 - Model - INFO - ---- EPOCH 006 EVALUATION ----
+2023-03-01 12:15:14,281 - Model - INFO - eval mean loss: 3752.329346
+2023-03-01 12:15:14,281 - Model - INFO - eval point avg class IoU: 0.171535
+2023-03-01 12:15:14,281 - Model - INFO - eval point accuracy: 0.615128
+2023-03-01 12:15:14,281 - Model - INFO - eval point avg class acc: 0.232761
+2023-03-01 12:15:14,281 - Model - INFO - ------- IoU --------
+class floor          weight: 0.075, IoU: 0.807 
+class table          weight: 0.660, IoU: 0.000 
+class chair          weight: 0.010, IoU: 0.000 
+class sofa           weight: 0.247, IoU: 0.000 
+class bookcase       weight: 0.009, IoU: 0.051 
+
+2023-03-01 12:15:14,281 - Model - INFO - Eval mean loss: 3752.329346
+2023-03-01 12:15:14,281 - Model - INFO - Eval accuracy: 0.615128
+2023-03-01 12:15:14,281 - Model - INFO - Save model...
+2023-03-01 12:15:14,281 - Model - INFO - Saving at log\sem_seg\2023-03-01_12-02\checkpoints/best_model.pth
+2023-03-01 12:15:14,412 - Model - INFO - Saving model....
+2023-03-01 12:15:14,412 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:15:14,412 - Model - INFO - **** Epoch 7 (7/20) ****
+2023-03-01 12:15:14,412 - Model - INFO - Learning rate:0.000500
+2023-03-01 12:16:53,934 - Model - INFO - Training mean loss: 1.182518
+2023-03-01 12:16:53,934 - Model - INFO - Training accuracy: 0.722709
+2023-03-01 12:16:53,934 - Model - INFO - ---- EPOCH 007 EVALUATION ----
+2023-03-01 12:16:56,348 - Model - INFO - eval mean loss: 833.281799
+2023-03-01 12:16:56,348 - Model - INFO - eval point avg class IoU: 0.156346
+2023-03-01 12:16:56,348 - Model - INFO - eval point accuracy: 0.497482
+2023-03-01 12:16:56,348 - Model - INFO - eval point avg class acc: 0.283578
+2023-03-01 12:16:56,348 - Model - INFO - ------- IoU --------
+class floor          weight: 0.136, IoU: 0.607 
+class table          weight: 0.608, IoU: 0.000 
+class chair          weight: 0.037, IoU: 0.000 
+class sofa           weight: 0.193, IoU: 0.000 
+class bookcase       weight: 0.026, IoU: 0.175 
+
+2023-03-01 12:16:56,348 - Model - INFO - Eval mean loss: 833.281799
+2023-03-01 12:16:56,348 - Model - INFO - Eval accuracy: 0.497482
+2023-03-01 12:16:56,348 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:16:56,348 - Model - INFO - **** Epoch 8 (8/20) ****
+2023-03-01 12:16:56,348 - Model - INFO - Learning rate:0.000500
+2023-03-01 12:18:43,603 - Model - INFO - Training mean loss: 1.105962
+2023-03-01 12:18:43,603 - Model - INFO - Training accuracy: 0.712530
+2023-03-01 12:18:43,603 - Model - INFO - ---- EPOCH 008 EVALUATION ----
+2023-03-01 12:18:46,419 - Model - INFO - eval mean loss: 2982.116211
+2023-03-01 12:18:46,419 - Model - INFO - eval point avg class IoU: 0.162298
+2023-03-01 12:18:46,419 - Model - INFO - eval point accuracy: 0.531548
+2023-03-01 12:18:46,421 - Model - INFO - eval point avg class acc: 0.272892
+2023-03-01 12:18:46,421 - Model - INFO - ------- IoU --------
+class floor          weight: 0.137, IoU: 0.653 
+class table          weight: 0.535, IoU: 0.000 
+class chair          weight: 0.019, IoU: 0.000 
+class sofa           weight: 0.309, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.158 
+
+2023-03-01 12:18:46,421 - Model - INFO - Eval mean loss: 2982.116211
+2023-03-01 12:18:46,421 - Model - INFO - Eval accuracy: 0.531548
+2023-03-01 12:18:46,421 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:18:46,421 - Model - INFO - **** Epoch 9 (9/20) ****
+2023-03-01 12:18:46,421 - Model - INFO - Learning rate:0.000250
+2023-03-01 12:20:34,995 - Model - INFO - Training mean loss: 1.126540
+2023-03-01 12:20:34,995 - Model - INFO - Training accuracy: 0.643537
+2023-03-01 12:20:35,003 - Model - INFO - ---- EPOCH 009 EVALUATION ----
+2023-03-01 12:20:37,464 - Model - INFO - eval mean loss: 17690.177734
+2023-03-01 12:20:37,464 - Model - INFO - eval point avg class IoU: 0.119683
+2023-03-01 12:20:37,464 - Model - INFO - eval point accuracy: 0.383736
+2023-03-01 12:20:37,464 - Model - INFO - eval point avg class acc: 0.306174
+2023-03-01 12:20:37,464 - Model - INFO - ------- IoU --------
+class floor          weight: 0.156, IoU: 0.563 
+class table          weight: 0.539, IoU: 0.036 
+class chair          weight: 0.022, IoU: 0.000 
+class sofa           weight: 0.276, IoU: 0.000 
+class bookcase       weight: 0.006, IoU: 0.000 
+
+2023-03-01 12:20:37,464 - Model - INFO - Eval mean loss: 17690.177734
+2023-03-01 12:20:37,464 - Model - INFO - Eval accuracy: 0.383736
+2023-03-01 12:20:37,464 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:20:37,464 - Model - INFO - **** Epoch 10 (10/20) ****
+2023-03-01 12:20:37,464 - Model - INFO - Learning rate:0.000250
+2023-03-01 12:22:26,204 - Model - INFO - Training mean loss: 1.075820
+2023-03-01 12:22:26,204 - Model - INFO - Training accuracy: 0.687576
+2023-03-01 12:22:26,204 - Model - INFO - ---- EPOCH 010 EVALUATION ----
+2023-03-01 12:22:29,653 - Model - INFO - eval mean loss: 2234.162598
+2023-03-01 12:22:29,653 - Model - INFO - eval point avg class IoU: 0.129814
+2023-03-01 12:22:29,653 - Model - INFO - eval point accuracy: 0.390373
+2023-03-01 12:22:29,653 - Model - INFO - eval point avg class acc: 0.239051
+2023-03-01 12:22:29,653 - Model - INFO - ------- IoU --------
+class floor          weight: 0.155, IoU: 0.512 
+class table          weight: 0.510, IoU: 0.000 
+class chair          weight: 0.029, IoU: 0.000 
+class sofa           weight: 0.305, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.137 
+
+2023-03-01 12:22:29,653 - Model - INFO - Eval mean loss: 2234.162598
+2023-03-01 12:22:29,653 - Model - INFO - Eval accuracy: 0.390373
+2023-03-01 12:22:29,653 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:22:29,653 - Model - INFO - **** Epoch 11 (11/20) ****
+2023-03-01 12:22:29,653 - Model - INFO - Learning rate:0.000250
+2023-03-01 12:24:27,562 - Model - INFO - Training mean loss: 1.119155
+2023-03-01 12:24:27,562 - Model - INFO - Training accuracy: 0.722213
+2023-03-01 12:24:27,562 - Model - INFO - Save model...
+2023-03-01 12:24:27,562 - Model - INFO - Saving at log\sem_seg\2023-03-01_12-02\checkpoints/model.pth
+2023-03-01 12:24:27,695 - Model - INFO - Saving model....
+2023-03-01 12:24:27,695 - Model - INFO - ---- EPOCH 011 EVALUATION ----
+2023-03-01 12:24:31,078 - Model - INFO - eval mean loss: 1477.823730
+2023-03-01 12:24:31,078 - Model - INFO - eval point avg class IoU: 0.128147
+2023-03-01 12:24:31,078 - Model - INFO - eval point accuracy: 0.439545
+2023-03-01 12:24:31,078 - Model - INFO - eval point avg class acc: 0.237575
+2023-03-01 12:24:31,078 - Model - INFO - ------- IoU --------
+class floor          weight: 0.147, IoU: 0.493 
+class table          weight: 0.627, IoU: 0.000 
+class chair          weight: 0.049, IoU: 0.000 
+class sofa           weight: 0.177, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.147 
+
+2023-03-01 12:24:31,078 - Model - INFO - Eval mean loss: 1477.823730
+2023-03-01 12:24:31,078 - Model - INFO - Eval accuracy: 0.439545
+2023-03-01 12:24:31,078 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:24:31,078 - Model - INFO - **** Epoch 12 (12/20) ****
+2023-03-01 12:24:31,078 - Model - INFO - Learning rate:0.000250
+2023-03-01 12:26:30,167 - Model - INFO - Training mean loss: 0.997292
+2023-03-01 12:26:30,167 - Model - INFO - Training accuracy: 0.729437
+2023-03-01 12:26:30,167 - Model - INFO - ---- EPOCH 012 EVALUATION ----
+2023-03-01 12:26:33,516 - Model - INFO - eval mean loss: 2.087554
+2023-03-01 12:26:33,516 - Model - INFO - eval point avg class IoU: 0.135951
+2023-03-01 12:26:33,516 - Model - INFO - eval point accuracy: 0.465698
+2023-03-01 12:26:33,516 - Model - INFO - eval point avg class acc: 0.299399
+2023-03-01 12:26:33,516 - Model - INFO - ------- IoU --------
+class floor          weight: 0.072, IoU: 0.568 
+class table          weight: 0.690, IoU: 0.000 
+class chair          weight: 0.055, IoU: 0.000 
+class sofa           weight: 0.183, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.111 
+
+2023-03-01 12:26:33,516 - Model - INFO - Eval mean loss: 2.087554
+2023-03-01 12:26:33,516 - Model - INFO - Eval accuracy: 0.465698
+2023-03-01 12:26:33,516 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:26:33,516 - Model - INFO - **** Epoch 13 (13/20) ****
+2023-03-01 12:26:33,516 - Model - INFO - Learning rate:0.000125
+2023-03-01 12:28:55,006 - Model - INFO - Training mean loss: 1.004075
+2023-03-01 12:28:55,008 - Model - INFO - Training accuracy: 0.722977
+2023-03-01 12:28:55,008 - Model - INFO - ---- EPOCH 013 EVALUATION ----
+2023-03-01 12:28:58,400 - Model - INFO - eval mean loss: 1.916321
+2023-03-01 12:28:58,400 - Model - INFO - eval point avg class IoU: 0.140966
+2023-03-01 12:28:58,400 - Model - INFO - eval point accuracy: 0.455223
+2023-03-01 12:28:58,400 - Model - INFO - eval point avg class acc: 0.258517
+2023-03-01 12:28:58,400 - Model - INFO - ------- IoU --------
+class floor          weight: 0.085, IoU: 0.612 
+class table          weight: 0.603, IoU: 0.000 
+class chair          weight: 0.037, IoU: 0.000 
+class sofa           weight: 0.258, IoU: 0.000 
+class bookcase       weight: 0.017, IoU: 0.092 
+
+2023-03-01 12:28:58,400 - Model - INFO - Eval mean loss: 1.916321
+2023-03-01 12:28:58,408 - Model - INFO - Eval accuracy: 0.455223
+2023-03-01 12:28:58,408 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:28:58,408 - Model - INFO - **** Epoch 14 (14/20) ****
+2023-03-01 12:28:58,408 - Model - INFO - Learning rate:0.000125
+2023-03-01 12:30:44,257 - Model - INFO - Training mean loss: 1.029078
+2023-03-01 12:30:44,257 - Model - INFO - Training accuracy: 0.719840
+2023-03-01 12:30:44,257 - Model - INFO - ---- EPOCH 014 EVALUATION ----
+2023-03-01 12:30:47,062 - Model - INFO - eval mean loss: 151.826965
+2023-03-01 12:30:47,062 - Model - INFO - eval point avg class IoU: 0.122533
+2023-03-01 12:30:47,062 - Model - INFO - eval point accuracy: 0.380615
+2023-03-01 12:30:47,062 - Model - INFO - eval point avg class acc: 0.256869
+2023-03-01 12:30:47,062 - Model - INFO - ------- IoU --------
+class floor          weight: 0.138, IoU: 0.459 
+class table          weight: 0.535, IoU: 0.000 
+class chair          weight: 0.022, IoU: 0.000 
+class sofa           weight: 0.280, IoU: 0.000 
+class bookcase       weight: 0.024, IoU: 0.153 
+
+2023-03-01 12:30:47,062 - Model - INFO - Eval mean loss: 151.826965
+2023-03-01 12:30:47,062 - Model - INFO - Eval accuracy: 0.380615
+2023-03-01 12:30:47,062 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:30:47,062 - Model - INFO - **** Epoch 15 (15/20) ****
+2023-03-01 12:30:47,062 - Model - INFO - Learning rate:0.000125
+2023-03-01 12:33:09,205 - Model - INFO - Training mean loss: 0.997650
+2023-03-01 12:33:09,205 - Model - INFO - Training accuracy: 0.725070
+2023-03-01 12:33:09,205 - Model - INFO - ---- EPOCH 015 EVALUATION ----
+2023-03-01 12:33:11,733 - Model - INFO - eval mean loss: 168.563248
+2023-03-01 12:33:11,733 - Model - INFO - eval point avg class IoU: 0.059918
+2023-03-01 12:33:11,733 - Model - INFO - eval point accuracy: 0.223076
+2023-03-01 12:33:11,733 - Model - INFO - eval point avg class acc: 0.192015
+2023-03-01 12:33:11,733 - Model - INFO - ------- IoU --------
+class floor          weight: 0.066, IoU: 0.241 
+class table          weight: 0.694, IoU: 0.000 
+class chair          weight: 0.030, IoU: 0.000 
+class sofa           weight: 0.210, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.058 
+
+2023-03-01 12:33:11,733 - Model - INFO - Eval mean loss: 168.563248
+2023-03-01 12:33:11,733 - Model - INFO - Eval accuracy: 0.223076
+2023-03-01 12:33:11,733 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:33:11,733 - Model - INFO - **** Epoch 16 (16/20) ****
+2023-03-01 12:33:11,733 - Model - INFO - Learning rate:0.000125
+2023-03-01 12:34:52,570 - Model - INFO - Training mean loss: 0.935489
+2023-03-01 12:34:52,570 - Model - INFO - Training accuracy: 0.737077
+2023-03-01 12:34:52,570 - Model - INFO - Save model...
+2023-03-01 12:34:52,570 - Model - INFO - Saving at log\sem_seg\2023-03-01_12-02\checkpoints/model.pth
+2023-03-01 12:34:52,691 - Model - INFO - Saving model....
+2023-03-01 12:34:52,693 - Model - INFO - ---- EPOCH 016 EVALUATION ----
+2023-03-01 12:34:55,119 - Model - INFO - eval mean loss: 1.633345
+2023-03-01 12:34:55,119 - Model - INFO - eval point avg class IoU: 0.088667
+2023-03-01 12:34:55,119 - Model - INFO - eval point accuracy: 0.291481
+2023-03-01 12:34:55,119 - Model - INFO - eval point avg class acc: 0.276831
+2023-03-01 12:34:55,119 - Model - INFO - ------- IoU --------
+class floor          weight: 0.051, IoU: 0.375 
+class table          weight: 0.626, IoU: 0.000 
+class chair          weight: 0.037, IoU: 0.000 
+class sofa           weight: 0.285, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.068 
+
+2023-03-01 12:34:55,119 - Model - INFO - Eval mean loss: 1.633345
+2023-03-01 12:34:55,119 - Model - INFO - Eval accuracy: 0.291481
+2023-03-01 12:34:55,119 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:34:55,119 - Model - INFO - **** Epoch 17 (17/20) ****
+2023-03-01 12:34:55,119 - Model - INFO - Learning rate:0.000063
+2023-03-01 12:36:37,319 - Model - INFO - Training mean loss: 0.968943
+2023-03-01 12:36:37,319 - Model - INFO - Training accuracy: 0.733380
+2023-03-01 12:36:37,319 - Model - INFO - ---- EPOCH 017 EVALUATION ----
+2023-03-01 12:36:39,673 - Model - INFO - eval mean loss: 919.787231
+2023-03-01 12:36:39,673 - Model - INFO - eval point avg class IoU: 0.138137
+2023-03-01 12:36:39,673 - Model - INFO - eval point accuracy: 0.438049
+2023-03-01 12:36:39,673 - Model - INFO - eval point avg class acc: 0.271873
+2023-03-01 12:36:39,681 - Model - INFO - ------- IoU --------
+class floor          weight: 0.149, IoU: 0.509 
+class table          weight: 0.576, IoU: 0.000 
+class chair          weight: 0.019, IoU: 0.000 
+class sofa           weight: 0.256, IoU: nan 
+class bookcase       weight: 0.000, IoU: 0.181 
+
+2023-03-01 12:36:39,681 - Model - INFO - Eval mean loss: 919.787231
+2023-03-01 12:36:39,681 - Model - INFO - Eval accuracy: 0.438049
+2023-03-01 12:36:39,681 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:36:39,681 - Model - INFO - **** Epoch 18 (18/20) ****
+2023-03-01 12:36:39,681 - Model - INFO - Learning rate:0.000063
+2023-03-01 12:38:22,202 - Model - INFO - Training mean loss: 0.983062
+2023-03-01 12:38:22,202 - Model - INFO - Training accuracy: 0.723770
+2023-03-01 12:38:22,210 - Model - INFO - ---- EPOCH 018 EVALUATION ----
+2023-03-01 12:38:25,012 - Model - INFO - eval mean loss: 1208.115601
+2023-03-01 12:38:25,012 - Model - INFO - eval point avg class IoU: 0.097736
+2023-03-01 12:38:25,012 - Model - INFO - eval point accuracy: 0.329659
+2023-03-01 12:38:25,012 - Model - INFO - eval point avg class acc: 0.194204
+2023-03-01 12:38:25,012 - Model - INFO - ------- IoU --------
+class floor          weight: 0.092, IoU: 0.422 
+class table          weight: 0.605, IoU: 0.000 
+class chair          weight: 0.044, IoU: 0.000 
+class sofa           weight: 0.257, IoU: 0.000 
+class bookcase       weight: 0.003, IoU: 0.066 
+
+2023-03-01 12:38:25,012 - Model - INFO - Eval mean loss: 1208.115601
+2023-03-01 12:38:25,012 - Model - INFO - Eval accuracy: 0.329659
+2023-03-01 12:38:25,012 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:38:25,012 - Model - INFO - **** Epoch 19 (19/20) ****
+2023-03-01 12:38:25,012 - Model - INFO - Learning rate:0.000063
+2023-03-01 12:40:07,284 - Model - INFO - Training mean loss: 0.943687
+2023-03-01 12:40:07,284 - Model - INFO - Training accuracy: 0.742261
+2023-03-01 12:40:07,284 - Model - INFO - ---- EPOCH 019 EVALUATION ----
+2023-03-01 12:40:09,742 - Model - INFO - eval mean loss: 168.575424
+2023-03-01 12:40:09,742 - Model - INFO - eval point avg class IoU: 0.149997
+2023-03-01 12:40:09,742 - Model - INFO - eval point accuracy: 0.469719
+2023-03-01 12:40:09,742 - Model - INFO - eval point avg class acc: 0.276864
+2023-03-01 12:40:09,750 - Model - INFO - ------- IoU --------
+class floor          weight: 0.146, IoU: 0.572 
+class table          weight: 0.579, IoU: 0.000 
+class chair          weight: 0.012, IoU: 0.000 
+class sofa           weight: 0.254, IoU: 0.000 
+class bookcase       weight: 0.009, IoU: 0.178 
+
+2023-03-01 12:40:09,750 - Model - INFO - Eval mean loss: 168.575424
+2023-03-01 12:40:09,750 - Model - INFO - Eval accuracy: 0.469719
+2023-03-01 12:40:09,750 - Model - INFO - Best mIoU: 0.171535
+2023-03-01 12:40:09,750 - Model - INFO - **** Epoch 20 (20/20) ****
+2023-03-01 12:40:09,750 - Model - INFO - Learning rate:0.000063
+2023-03-01 12:41:52,327 - Model - INFO - Training mean loss: 0.960611
+2023-03-01 12:41:52,327 - Model - INFO - Training accuracy: 0.733163
+2023-03-01 12:41:52,327 - Model - INFO - ---- EPOCH 020 EVALUATION ----
+2023-03-01 12:41:55,113 - Model - INFO - eval mean loss: 24.861917
+2023-03-01 12:41:55,113 - Model - INFO - eval point avg class IoU: 0.103453
+2023-03-01 12:41:55,113 - Model - INFO - eval point accuracy: 0.362541
+2023-03-01 12:41:55,113 - Model - INFO - eval point avg class acc: 0.245173
+2023-03-01 12:41:55,113 - Model - INFO - ------- IoU --------
+class floor          weight: 0.084, IoU: 0.421 
+class table          weight: 0.666, IoU: 0.000 
+class chair          weight: 0.022, IoU: 0.000 
+class sofa           weight: 0.216, IoU: 0.000 
+class bookcase       weight: 0.011, IoU: 0.096 
+
+2023-03-01 12:41:55,113 - Model - INFO - Eval mean loss: 24.861917
+2023-03-01 12:41:55,113 - Model - INFO - Eval accuracy: 0.362541
+2023-03-01 12:41:55,113 - Model - INFO - Best mIoU: 0.171535
